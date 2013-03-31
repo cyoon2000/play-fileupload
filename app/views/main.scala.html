@@ -1,15 +1,24 @@
 @(title: String)(content: Html)
 
 <!DOCTYPE html>
+<html lang="@lang().code()">
+<head>
+    <title>@title</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+</head>
 
-<html>
-    <head>
-        <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
-    </head>
-    <body>
-        @content
-    </body>
+<body>
+@if(flash.contains(Application.FLASH_ERROR_KEY)) {
+<div style="color: red;">
+    @flash().get(Application.FLASH_ERROR_KEY)
+</div>
+}
+@if(flash.contains(Application.FLASH_MESSAGE_KEY)) {
+<div style="color: blue;">
+    @flash().get(Application.FLASH_MESSAGE_KEY)
+</div>
+}
+@content
+
+</body>
 </html>

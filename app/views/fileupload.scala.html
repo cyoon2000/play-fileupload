@@ -1,0 +1,36 @@
+@(s3Files: List[models.S3File])
+
+@import com.feth.play.module.pa.views.html._
+
+@main("File Upload with Java, Play 2, and S3") {
+
+<h3>Upload a file:</h3>
+
+@helper.form(action = routes.FileUpload.upload, 'enctype -> "multipart/form-data") {
+<input type="file" name="upload">
+<input type="submit">
+}
+
+<hr/>
+
+<h3>Your Uploads:</h3>
+
+<table id="fileEntries">
+    <caption>Uploaded Files</caption>
+    <thead>
+    <tr>
+        <th>name</th>
+        <th>tags</th>
+        <th>userId</th>
+    </tr>
+    </thead>
+    <tbody style="height: 150px; overflow-y: scroll">
+    @for(s3file <- s3Files) {
+    <tr>
+        <td><a href="@s3file.getUrl()">@s3file.name</a></td>
+        <td>tags HERE!!! </td>
+        <td>@s3file.getUserId()</td>
+    </tr>
+    }
+</table>
+}
