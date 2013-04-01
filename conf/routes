@@ -16,8 +16,8 @@ POST    /upload                     controllers.FileUpload.upload
 GET     /fileready                  controllers.FileUpload.ready
 
 # Websocket
-GET     /whiteboard					controllers.WhiteboardApplication.index
-GET     /ws							controllers.WhiteboardApplication.ws
+#GET     /whiteboard					controllers.WhiteboardApplication.index
+#GET     /ws							controllers.WhiteboardApplication.ws
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
