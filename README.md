@@ -7,8 +7,7 @@
 4. Assuming it's a text file, tags will be generated and persisted. (currently upto 5 top tags persisted but configurable)
 5. For generating tag, MapReduce pattern is used. See below for details.
 
-## Use of Akka Actors implementing MapReduce pattern ##
-Non-blocking message flow -
+## Use of Akka Actors implementing MapReduce pattern (Non-blocking message flow) ##
 1. A FileReadActor is created upon upload, reads file line by line, send each line of text as a String message (tell) to a MasterActor
 (For consistent performance, only first N lines of the file is being read for tag generation.)
 2. A MasterActor reads the message, maps the words, reduces the words and finally does an inmemory aggregation of the result.
