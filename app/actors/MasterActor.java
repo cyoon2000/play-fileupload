@@ -5,7 +5,10 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.actor.UntypedActorFactory;
 
-import messages.CountResult;
+import dto.CountResult;
+
+import java.lang.System;
+import java.util.Map;
 
 public class MasterActor extends UntypedActor {
 
@@ -31,8 +34,19 @@ public class MasterActor extends UntypedActor {
 		if (message instanceof String) {
 			mapActor.tell(message);
 		} else if (message instanceof CountResult) {
-			aggregateActor.tell(message);
-		} else
+            CountResult countResult = (CountResult)message;
+            if ( countResult.getFinalResultMap().size() == 0 ) {
+                // tell aggregateActor to give me the result
+                aggregateActor.tell(message);
+            } else {
+                // got the result
+                getContext().parent().tell(message);
+            }
+
+		} else if (message instanceof Map) {
+            // tell the result back to parent
+            getContext().parent().tell(message);
+        } else
 			unhandled(message);
 	}
 }

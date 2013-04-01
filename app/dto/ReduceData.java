@@ -1,16 +1,17 @@
 package dto;
 
 import java.util.List;
+import java.util.HashMap;
 
-public class MapData {
+public class ReduceData {
 
-    private List<WordCount> dataList;
+    private HashMap<String, Integer> reduceDataList;
 
-    public MapData(List<WordCount> dataList) {
-        this.dataList = dataList;
+    public HashMap<String, Integer> getReduceDataList() {
+        return reduceDataList;
     }
 
-    public List<WordCount> getDataList() {
-        return dataList;
+    public ReduceData(HashMap<String, Integer> reduceDataList) {
+        this.reduceDataList = reduceDataList;
     }
 }

@@ -7,19 +7,35 @@ import play.mvc.Http;
 import play.mvc.Security;
 import views.html.restricted;
 import views.html.fileupload;
+import views.html.fileready;
+import views.html.termcloud;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.Exception;
 import java.lang.String;
 import java.lang.System;
 import java.lang.Thread;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.actor.UntypedActor;
+
+import static akka.pattern.Patterns.ask;
+import akka.dispatch.Future;
+//import akka.actor.UntypedActorFactory;
 
 import com.typesafe.config.ConfigFactory;
 
 import models.S3File;
 import models.User;
-
+import actors.FileReadActor;
 
 @Security.Authenticated(Secured.class)
 public class FileUpload extends Controller {
@@ -46,15 +62,29 @@ public class FileUpload extends Controller {
             s3File.file = uploadFilePart.getFile();
             s3File.save();
 
-            String localFileName = s3File.download();
-//            generateTag(localFileName);
+            // generate and save tags
+            String fileId = s3File.download();
+            generateTag(fileId);
 
-            return redirect(routes.FileUpload.index());
+//            return redirect(routes.FileUpload.index());
+            return redirect(routes.FileUpload.ready());
         }
         else {
             return badRequest("File upload error");
         }
     }
 
+    public static Result ready() {
+        return ok(fileready.render("Your file is uploaded!"));
+    }
+
+    private static void generateTag(String fileId) {
+
+        ActorSystem system = ActorSystem.create("WordCountApp");
+
+        ActorRef fileReadActor = system.actorOf(new Props(FileReadActor.class), "fileread");
+
+        fileReadActor.tell(fileId);
+    }
 
 }

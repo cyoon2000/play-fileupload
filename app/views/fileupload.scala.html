@@ -13,7 +13,7 @@
 
 <hr/>
 
-<h3>Your Uploads:</h3>
+<h3>My Files:</h3>
 
 <table id="fileEntries">
     <caption>Uploaded Files</caption>
@@ -22,14 +22,16 @@
         <th>name</th>
         <th>tags</th>
         <th>userId</th>
+        <th>show tagCloud</th>
     </tr>
     </thead>
     <tbody style="height: 150px; overflow-y: scroll">
     @for(s3file <- s3Files) {
     <tr>
         <td><a href="@s3file.getUrl()">@s3file.name</a></td>
-        <td>tags HERE!!! </td>
+        <td>@s3file.getTags()</td>
         <td>@s3file.getUserId()</td>
+        <td><font size="6">@s3file.getTag(0)</font> <font size="4">@s3file.getTag(1)</font> <font size="2">@s3file.getTag(2)</font></td>
     </tr>
     }
 </table>

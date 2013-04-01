@@ -9,6 +9,7 @@ object ApplicationBuild extends Build {
 
     val appDependencies = Seq(
       // Add your project dependencies here,
+      "com.google.code.gson" % "gson" % "2.2",
       "com.feth"      %%  "play-authenticate" % "0.2.2-SNAPSHOT",
 	  "com.amazonaws" % "aws-java-sdk" % "1.3.11",
       "postgresql" % "postgresql" % "9.1-901-1.jdbc4"

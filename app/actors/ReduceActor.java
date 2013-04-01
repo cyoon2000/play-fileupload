@@ -6,9 +6,9 @@ import java.util.List;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 
-import messages.MapData;
-import messages.ReduceData;
-import messages.WordCount;
+import dto.MapData;
+import dto.ReduceData;
+import dto.WordCount;
 
 public class ReduceActor extends UntypedActor {
 

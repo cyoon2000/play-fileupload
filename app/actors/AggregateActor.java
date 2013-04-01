@@ -1,16 +1,28 @@
 package actors;
 
+import java.lang.Integer;
+import java.lang.String;
+import java.lang.System;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Iterator;
+import java.util.TreeMap;
 
 import akka.actor.UntypedActor;
 
-import messages.ReduceData;
-import messages.CountResult;
+import dto.ReduceData;
+import dto.CountResult;
 
 public class AggregateActor extends UntypedActor {
 
-	private Map<String, Integer> finalReducedMap = new HashMap<String, Integer>();
+    public static int MAX_RESULT_SIZE = 5;
+
+    private Map<String, Integer> finalReducedMap = new HashMap<String, Integer>();
 
 	@Override
 	public void onReceive(Object message) throws Exception {
@@ -18,7 +30,10 @@ public class AggregateActor extends UntypedActor {
 			ReduceData reduceData = (ReduceData) message;
 			aggregateInMemoryReduce(reduceData.getReduceDataList());
 		} else if (message instanceof CountResult) {
-			System.out.println(finalReducedMap.toString());
+            CountResult countResult = (CountResult) message;
+            countResult.setFinalResultMap(sortByValue(finalReducedMap, MAX_RESULT_SIZE));
+//            getSender().tell(countResult));
+            getContext().parent().tell(countResult);
 		} else
 			unhandled(message);
 	}
@@ -34,4 +49,34 @@ public class AggregateActor extends UntypedActor {
 			}
 		}
 	}
+
+    /**
+     * returns sorted and truncated map
+     * @param map
+     * @return
+     */
+    public static Map sortByValue(Map map, int maxSize) {
+        List list = new LinkedList(map.entrySet());
+        Collections.sort(list, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                // ascending order
+//                return ((Comparable) ((Map.Entry) (o1)).getValue())
+//                        .compareTo(((Map.Entry) (o2)).getValue());
+                // descending order
+                return ((Comparable) ((Map.Entry) (o2)).getValue())
+                        .compareTo(((Map.Entry) (o1)).getValue());
+            }
+        });
+
+        int i = 0;
+        Map result = new LinkedHashMap();
+        for (Iterator it = list.iterator(); it.hasNext();) {
+            // limit the size of the return map
+            if (i++ == maxSize) break;
+
+            Map.Entry entry = (Map.Entry)it.next();
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
+    }
 }

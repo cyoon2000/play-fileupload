@@ -1,16 +1,30 @@
 package dto;
 
+import java.lang.Integer;
+import java.lang.String;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ReduceData {
+public class CountResult {
 
-    private HashMap<String, Integer> reduceDataList;
+    private String fileId;
 
-    public HashMap<String, Integer> getReduceDataList() {
-        return reduceDataList;
+    private Map<String, Integer> finalResultMap = new HashMap<String, Integer>();
+
+    public String getFileId() {
+        return fileId;
     }
 
-    public ReduceData(HashMap<String, Integer> reduceDataList) {
-        this.reduceDataList = reduceDataList;
+    public CountResult(String fileId) {
+        this.fileId = fileId;
+    }
+
+    public Map<String, Integer> getFinalResultMap() {
+        return finalResultMap;
+    }
+
+    public void setFinalResultMap(Map<String, Integer> finalResultMap) {
+        this.finalResultMap = finalResultMap;
     }
 }
