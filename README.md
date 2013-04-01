@@ -18,6 +18,7 @@
 1. Backend (download file) - downloading to InputStream instead of temporary File? 
 2. Backend (word count) - Use remote actors for scalablity. Use routers (esp. if reading whole file instead of first N lines) for regulating the load.
 3. UI - Upon tag generation, use Websocket to update the tag info in the browser w/o redirecting to confirmation page.
+3. UI - Displaying tag cloud, can use an opensource JavaScript lib for better presentation.
 
 ## References ##
 Simple OAuth(2.0) authentication
