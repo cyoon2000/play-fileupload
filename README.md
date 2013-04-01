@@ -8,10 +8,11 @@
 5. For generating tag, MapReduce pattern is used. See below for details.
 
 ## Use of Akka Actors implementing MapReduce pattern ##
-1. A FileReadActor is created upon upload, reads file line by line, send each line of text as a String message to a MasterActor
+Non-blocking message flow -
+1. A FileReadActor is created upon upload, reads file line by line, send each line of text as a String message (tell) to a MasterActor
 (For consistent performance, only first N lines of the file is being read for tag generation.)
 2. A MasterActor reads the message, maps the words, reduces the words and finally does an inmemory aggregation of the result.
-3. Non-blocking message flow - After the FileReadActor completing sending the file content(fist N lines) to the MasterActor, FileReadActor sleeps for N(1) second(s), then demands the result by sending CountResult message to the MasterActor. Upon receiving CountResult, MasterActor(AggregateActor) populate the CountResult with the aggregated result, send it back to FileReadActor. 
+3. After the FileReadActor completing sending the file content(fist N lines) to the MasterActor, FileReadActor sleeps 1 second, then demands the result by sending CountResult message (tell) to the MasterActor. Upon receiving CountResult, MasterActor(AggregateActor) populate the CountResult with the aggregated result, send it back(tell) to FileReadActor. 
 4. When the FileReadActor receives the CountResult (tags) back from MasterActor, it persist the results as JSON String in DB accordingly.
 
 ## Considerations for future improvements ##
