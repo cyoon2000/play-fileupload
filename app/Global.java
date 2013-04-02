@@ -1,6 +1,14 @@
 import play.Application;
 import play.GlobalSettings;
 import play.mvc.Call;
+import play.libs.Akka;
+
+import akka.actor.ActorRef;
+import akka.actor.Props;
+import akka.util.Duration;
+
+import java.lang.System;
+import java.util.concurrent.TimeUnit;
 
 import com.feth.play.module.pa.PlayAuthenticate;
 import com.feth.play.module.pa.PlayAuthenticate.Resolver;
@@ -9,9 +17,32 @@ import com.feth.play.module.pa.exceptions.AuthException;
 
 import controllers.routes;
 
+import actors.ToptagActor;
+
 public class Global extends GlobalSettings {
 
     public void onStart(final Application app) {
+
+
+        ActorRef toptagActor = Akka.system().actorOf(new Props(ToptagActor.class), "toptagActor");
+
+//        System.out.println("PATH+++++++++++" + toptagActor.path());
+
+//        Akka.system().scheduler().scheduleOnce(
+//                Duration.create(1, TimeUnit.SECONDS),
+//                toptagActor,
+//                "startCount"
+//        );
+
+        Akka.system().scheduler().schedule(
+                Duration.create(1, TimeUnit.SECONDS),
+//                Duration.create(30, TimeUnit.MINUTES),
+                Duration.create(30, TimeUnit.SECONDS),
+                toptagActor,
+                "tick"
+        );
+
+
         PlayAuthenticate.setResolver(new Resolver() {
 
             @Override

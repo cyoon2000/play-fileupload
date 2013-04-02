@@ -13,54 +13,48 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-import play.libs.Akka;
-
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 
 import dto.ReduceData;
-import dto.CountResult;
 
-public class AggregateActor extends UntypedActor {
+public class ToptagActor extends UntypedActor {
 
     public static int MAX_RESULT_SIZE = 5;
 
     private Map<String, Integer> finalReducedMap = new HashMap<String, Integer>();
 
-//    private ActorRef toptagActorAbsolute = Akka.system().actorFor("akka://application/user/toptagActor");
-    private ActorRef toptagActor = Akka.system().actorFor("/user/toptagActor");
+    @Override
+    public void preStart() {
+        System.out.println("ToptagActor is running");
+    }
 
 	@Override
 	public void onReceive(Object message) throws Exception {
-		if (message instanceof ReduceData) {
-			ReduceData reduceData = (ReduceData) message;
-			aggregateInMemoryReduce(reduceData.getReduceDataList());
-		} else if (message instanceof CountResult) {
-            CountResult countResult = (CountResult) message;
-            countResult.setFinalResultMap(sortByValue(finalReducedMap, MAX_RESULT_SIZE));
-//            getSender().tell(countResult));
-            getContext().parent().tell(countResult);
-
-            // also send the result to toptagActor
-            if (toptagActor != null) {
-                toptagActor.tell(countResult.getFinalResultMap());
-            }
-
+		if (message instanceof String) {
+            if (finalReducedMap.size() > 0)
+                System.out.println("********* Current TOP tags on this site are : " + sortByValue(finalReducedMap, MAX_RESULT_SIZE));
+        }
+		else if (message instanceof Map) {
+            System.out.println("********** ToptagActor adding new results to toptag.");
+            Map<String, Integer> toptagPerFileMap = (Map<String, Integer>) message;
+            aggregateInMemoryReduce(toptagPerFileMap);
 		} else
 			unhandled(message);
 	}
 
-	private void aggregateInMemoryReduce(Map<String, Integer> reducedList) {
-		Integer count = null;
-		for (String key : reducedList.keySet()) {
-			if (finalReducedMap.containsKey(key)) {
-				count = reducedList.get(key) + finalReducedMap.get(key);
-				finalReducedMap.put(key, count);
-			} else {
-				finalReducedMap.put(key, reducedList.get(key));
-			}
-		}
-	}
+    private void aggregateInMemoryReduce(Map<String, Integer> reducedList) {
+        Integer count = null;
+        for (String key : reducedList.keySet()) {
+            if (finalReducedMap.containsKey(key)) {
+                count = reducedList.get(key) + finalReducedMap.get(key);
+                finalReducedMap.put(key, count);
+            } else {
+                finalReducedMap.put(key, reducedList.get(key));
+            }
+        }
+    }
+
 
     /**
      * returns sorted and truncated map
@@ -91,4 +85,5 @@ public class AggregateActor extends UntypedActor {
         }
         return result;
     }
+
 }
