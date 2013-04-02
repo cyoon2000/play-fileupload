@@ -30,7 +30,7 @@ import dto.ReduceData;
 @Entity
 public class S3File extends Model {
 
-    public static String DOWNLOAD_LOCATION = "/www/a/download/";
+    public static String DOWNLOAD_LOCATION = "/tmp/";
 
     @Id
     public UUID id;
